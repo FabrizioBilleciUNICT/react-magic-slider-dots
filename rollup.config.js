@@ -1,11 +1,11 @@
-import babel from 'rollup-plugin-babel'
-import commonjs from 'rollup-plugin-commonjs'
-import external from 'rollup-plugin-peer-deps-external'
-import postcss from 'rollup-plugin-postcss'
-import resolve from 'rollup-plugin-node-resolve'
-import url from 'rollup-plugin-url'
-import minify from 'rollup-plugin-babel-minify';
 import pkg from './package.json'
+import postcss from 'rollup-plugin-postcss';
+import url from 'rollup-plugin-url';
+import babel from '@rollup/plugin-babel';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import { DEFAULT_EXTENSIONS } from '@babel/core';
+import path from 'path';
 
 export default {
   input: 'src/index.js',
@@ -22,14 +22,16 @@ export default {
     }
   ],
   plugins: [
-    external(),
     postcss({
-      extract: "./dist/magic-dots.css",
+      extract: path.resolve(__dirname, 'dist/magic-dots.css'),
       minimize: true
     }),
     url(),
     babel({
-      exclude: 'node_modules/**'
+      babelHelpers: 'runtime',
+      skipPreflightCheck: 'true',
+      extensions: [...DEFAULT_EXTENSIONS, '.ts'],
+      exclude: /^(.+\/)?node_modules\/.+$/,
     }),
     resolve(),
     commonjs(),
